@@ -36,7 +36,10 @@ async function apiFetch(url, options = {}) {
     }
 
     try {
-        const response = await fetch(url, options);
+        const response = await fetch(url, {
+            ...options,
+            credentials: "include"  
+        });
         
         if (response.status === 204) { 
             return { success: true };
@@ -45,7 +48,8 @@ async function apiFetch(url, options = {}) {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error || 'Ocurrió un error en la petición');
+            const errorMessage = data.error || data.message || data.detail || 'Ocurrió un error en la petición';
+            throw new Error(errorMessage);
         }
 
         return data;
